@@ -12,7 +12,7 @@ You have few coputers at home... or just near by. You want to run codec on all o
 Here is an idea.  
 
 Run a file processing script on each machine you have mounted your file storage... 
-
+```
 #!/bin/bash
 until [[ $fileprocess == "." ]]
   do
@@ -29,3 +29,4 @@ until [[ $fileprocess == "." ]]
   done
 date
 echo "Complete!"
+```
