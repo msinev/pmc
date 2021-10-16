@@ -30,3 +30,39 @@ until [[ $fileprocess == "." ]]
 date
 echo "Complete!"
 ```
+
+But somehow you should get files from some this URL (aka REST service endpoint)
+Assuming you have handler there getting the one file per request or "." if last file being already sent
+
+```
+func getHandler(w http.ResponseWriter, r *http.Request) {
+	select {
+	case inData,ok:=<-WorkSource:
+		if(ok) {
+			w.Write([]byte(inData))
+		}else {
+			w.Write([]byte("."))
+		}
+	case <-time.After(1 * time.Second):
+		w.Write([]byte(""))
+	}
+}
+
+func pollFiles(dirname string, WorkSource chan<- string) {
+	defer close(WorkSource)
+
+	files, err := ioutil.ReadDir(dirname)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, file := range files {
+		if !file.IsDir() {
+			WorkSource<-file.Name()
+			log.Println("Queueing... "+file.Name())
+		}
+	}
+	log.Println("Complete list of "+dirname+"... ")
+}
+
+```
