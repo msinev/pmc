@@ -31,23 +31,10 @@ date
 echo "Complete!"
 ```
 
-But somehow you should get files from some this URL (aka REST service endpoint)
-Assuming you have handler there getting the one file per request or "." if last file being already sent
+With simple server below you should get files from  URL (aka REST service endpoint) one by one
 
 ```
-func getHandler(w http.ResponseWriter, r *http.Request) {
-	select {
-	case inData,ok:=<-WorkSource:
-		if(ok) {
-			w.Write([]byte(inData))
-		}else {
-			w.Write([]byte("."))
-		}
-	case <-time.After(1 * time.Second):
-		w.Write([]byte(""))
-	}
-}
-
+// It runs in background pushing file list into channel
 func pollFiles(dirname string, WorkSource chan<- string) {
 	defer close(WorkSource)
 
@@ -64,5 +51,20 @@ func pollFiles(dirname string, WorkSource chan<- string) {
 	}
 	log.Println("Complete list of "+dirname+"... ")
 }
+
+// It serves files from channel one by one on request
+func getHandler(w http.ResponseWriter, r *http.Request) {
+	select {
+	case inData,ok:=<-WorkSource:
+		if(ok) {
+			w.Write([]byte(inData))
+		}else {
+			w.Write([]byte("."))
+		}
+	case <-time.After(1 * time.Second):
+		w.Write([]byte(""))
+	}
+}
+
 
 ```
