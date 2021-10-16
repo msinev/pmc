@@ -68,3 +68,12 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 
 
 ```
+Here it is pkg/servepath Take it and use wisely
+
+# Case two - better than nothing
+
+With simple case one all works fine while everything works fine. Crashes or outages not handled. Shared folder also required. 
+Let's try to fix it. 
+Extra features would be required to mention if data processing task being started finished aborted or stalled. 
+Ability to show where task is stalled. 
+Extra bonus - ability to pull and push data over the http. 
